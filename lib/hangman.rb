@@ -28,7 +28,7 @@ class Hangman
   end
 
   def load_words
-    words = File.open('/usr/share/dict/american-english').map(&:strip).grep %r(^[a-z]+$)
+    words = File.open('/usr/share/dict/words').map(&:strip).grep %r(^[a-z]+$)
   end
 
   def initialize
