@@ -37,7 +37,7 @@ class Hangman
   end
 
   def game
-    pattern = '_____'
+    pattern = '________'
     used_letters = []
     while(pattern =~ /_/) do
       @words = filter_words(@words, pattern, used_letters)
