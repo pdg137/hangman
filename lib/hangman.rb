@@ -10,21 +10,22 @@ class Hangman
   end
 
   def get_options(words, pattern, guess)
-    words.map do |word|
+    options = {}
+    words.each do |word|
       p = pattern.dup
       word.length.times do |i|
         if word[i] == guess
           p[i] = guess
         end
       end
-      p
-    end.sort.uniq
+      options[p] ||= 0
+      options[p] += 1
+    end
+    options
   end
 
-  def best_option(words, options, used_letters)
-    options.max_by do |pattern|
-      filter_words(words, pattern, used_letters).length
-    end
+  def best_option(options)
+    options.max_by { |pattern, word_count| word_count }[0]
   end
 
   def load_words
@@ -52,7 +53,7 @@ class Hangman
 
       used_letters << guess
       options = get_options(@words, pattern, guess)
-      pattern = best_option(@words, options, used_letters)
+      pattern = best_option(options)
     end
 
     puts "#{pattern} - you got it!"

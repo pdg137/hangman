@@ -5,17 +5,33 @@ describe Hangman do
 
   describe '#options' do
     it 'understands the one-letter case' do
-      expect(subject.get_options(%w(a b),'_','a')).to eq %w(_ a)
+      expect(subject.get_options(%w(a b),'_','a')).to eq ({
+        '_' => 1,
+        'a' => 1,
+      })
     end
 
     it 'leaves out impossible options' do
-      expect(subject.get_options(%w(b),'_','a')).to eq %w(_)
+      expect(subject.get_options(%w(b),'_','a')).to eq ({
+        '_' => 1,
+      })
     end
 
     it 'understands the two-letter case' do
-      expect(subject.get_options(%w(ab ba bb),'__','a')).to eq %w(__ _a a_)
-      expect(subject.get_options(%w(aa ba bb),'__','a')).to eq %w(__ _a aa)
-      expect(subject.get_options(%w(ba bc bv),'b_','a')).to eq %w(b_ ba)
+      expect(subject.get_options(%w(ab ba bb),'__','a')).to eq ({
+        '__' => 1,
+        '_a' => 1,
+        'a_' => 1,
+      })
+      expect(subject.get_options(%w(aa ba bb),'__','a')).to eq ({
+        '__' => 1,
+        '_a' => 1,
+        'aa' => 1
+      })
+      expect(subject.get_options(%w(ba bc bv),'b_','a')).to eq ({
+        'b_' => 2,
+        'ba' => 1,
+      })
     end
   end
 
