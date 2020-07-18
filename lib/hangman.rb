@@ -48,12 +48,21 @@ class Hangman
         guess = gets.strip
       end
 
-      @words = filter_words(@all_words, pattern, used_letters)
-      used_letters << guess
-      options = get_options(@words, pattern, guess)
-      pattern = best_option(@words, options, used_letters)
+      (pattern, used_letters) = do_guess(guess, pattern, used_letters)
     end
 
     puts "#{pattern} - you got it!"
+  end
+
+  def do_guess(pattern, used_letters, guess)
+    words = filter_words(@all_words, pattern, used_letters)
+
+    new_used_letters = used_letters.dup
+    new_used_letters << guess
+
+    options = get_options(words, pattern, guess)
+    new_pattern = best_option(words, options, new_used_letters)
+
+    [new_pattern, new_used_letters.sort.uniq]
   end
 end
