@@ -32,7 +32,7 @@ class Hangman
   end
 
   def initialize
-    @words = load_words
+    @all_words = load_words
     nil
   end
 
@@ -40,7 +40,7 @@ class Hangman
     pattern = '________'
     used_letters = []
     while(pattern =~ /_/) do
-      @words = filter_words(@words, pattern, used_letters)
+      @words = filter_words(@all_words, pattern, used_letters)
 
       puts "#{pattern} (used: #{used_letters.sort.join})"
 
