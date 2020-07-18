@@ -26,5 +26,7 @@ Used: <input type="text" name="used" value="#{new_used_letters.join}"><br>
 Your guess: <input type="text" name="guess" autofocus="true"><br>
 <input type="submit">
 </form>
+
+<a href="?">New game</a>
 END
 end
