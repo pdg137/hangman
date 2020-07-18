@@ -40,8 +40,6 @@ class Hangman
     pattern = '________'
     used_letters = []
     while(pattern =~ /_/) do
-      @words = filter_words(@all_words, pattern, used_letters)
-
       puts "#{pattern} (used: #{used_letters.sort.join})"
 
       guess = ''
@@ -50,6 +48,7 @@ class Hangman
         guess = gets.strip
       end
 
+      @words = filter_words(@all_words, pattern, used_letters)
       used_letters << guess
       options = get_options(@words, pattern, guess)
       pattern = best_option(@words, options, used_letters)
