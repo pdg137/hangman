@@ -1,3 +1,5 @@
+require_relative 'game_state'
+
 class Hangman
   def filter_words(words, pattern, used_letters)
     char_class = if used_letters.empty?
@@ -9,18 +11,6 @@ class Hangman
     words.grep regexp
   end
 
-  def get_options(words, pattern, guess)
-    words.map do |word|
-      p = pattern.dup
-      word.length.times do |i|
-        if word[i] == guess
-          p[i] = guess
-        end
-      end
-      p
-    end.sort.uniq
-  end
-
   def best_option(words, options, used_letters)
     options.max_by do |pattern|
       filter_words(words, pattern, used_letters).length
@@ -28,7 +18,7 @@ class Hangman
   end
 
   def load_words
-    words = File.open('/usr/share/dict/words').map(&:strip).grep %r(^[a-z]+$)
+    words = File.open(ENV['HANGMAN_DICTIONARY']).map(&:strip).grep %r(^[a-z]+$)
   end
 
   def initialize
@@ -54,13 +44,14 @@ class Hangman
     puts "#{pattern} - you got it!"
   end
 
-  def do_guess(pattern, used_letters, guess)
+  def do_guess(guess, pattern, used_letters)
     words = filter_words(@all_words, pattern, used_letters)
 
     new_used_letters = used_letters.dup
     new_used_letters << guess
 
-    options = get_options(words, pattern, guess)
+    game_state = GameState.new(words, pattern, used_letters, guess, :computer)
+    options = game_state.moves.map { |m| m.pattern }
     new_pattern = best_option(words, options, new_used_letters)
 
     [new_pattern, new_used_letters.sort.uniq]
