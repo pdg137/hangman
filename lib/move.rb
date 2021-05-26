@@ -24,4 +24,3 @@ class Move
     @guess = guess
   end
 end
-

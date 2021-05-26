@@ -11,14 +11,15 @@ class Hangman
     words.grep regexp
   end
 
-  def best_option(words, options, used_letters)
-    options.max_by do |pattern|
-      filter_words(words, pattern, used_letters).length
+  def best_move(game_state)
+    game_state.moves.max_by do |move|
+      pattern = move.pattern
+      filter_words(@all_words, pattern, game_state.used_letters).length
     end
   end
 
   def load_words
-    words = File.open(ENV['HANGMAN_DICTIONARY']).map(&:strip).grep %r(^[a-z]+$)
+    words = File.open(ENV['HANGMAN_DICTIONARY']).map(&:strip).grep %r(^[a-z]{8}$)
   end
 
   def initialize
@@ -28,32 +29,29 @@ class Hangman
 
   def game
     pattern = '________'
-    used_letters = []
-    while(pattern =~ /_/) do
-      puts "#{pattern} (used: #{used_letters.sort.join})"
+    game_state = GameState.new(@all_words, pattern, [], nil, :player)
 
+    used_letters = []
+    while(game_state.pattern =~ /_/) do
+      puts game_state.to_s
       guess = ''
-      until guess =~ /^[a-z]$/ && !used_letters.include?(guess)
+      until move = game_state.moves.select { |m| m.guess == guess }.first
         print 'Your guess? '
         guess = gets.strip
       end
 
-      (pattern, used_letters) = do_guess(guess, pattern, used_letters)
+      require 'byebug'; debugger
+      game_state = game_state.apply(move)
+
+      computer_move = best_move(game_state)
+      game_state = game_state.apply(computer_move)
     end
 
-    puts "#{pattern} - you got it!"
+    puts "#{game_state.pattern} - you got it!"
   end
 
-  def do_guess(guess, pattern, used_letters)
-    words = filter_words(@all_words, pattern, used_letters)
+  def do_guess(game_state)
 
-    new_used_letters = used_letters.dup
-    new_used_letters << guess
-
-    game_state = GameState.new(words, pattern, used_letters, guess, :computer)
-    options = game_state.moves.map { |m| m.pattern }
-    new_pattern = best_option(words, options, new_used_letters)
-
-    [new_pattern, new_used_letters.sort.uniq]
+    [new_pattern, game_state.used_letters.sort.uniq]
   end
 end
